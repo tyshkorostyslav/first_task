@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/tyshkorostyslav/first_task/delivery"
@@ -14,44 +13,12 @@ import (
 
 var router *gin.Engine
 
-func InitDb() *gorm.DB {
-	// Openning file
-	db, err := gorm.Open("sqlite3", "./data.db")
-	// Display SQL queries
-	db.LogMode(true)
-
-	// Error
-	if err != nil {
-		panic(err)
-	}
-	// Creating the table
-	if !db.HasTable(&repository.User{}) {
-		db.CreateTable(&repository.User{})
-		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&repository.User{})
-	}
-
-	if !db.HasTable(&repository.LearningMaterial{}) {
-		db.CreateTable(&repository.LearningMaterial{})
-		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&repository.LearningMaterial{})
-	}
-
-	return db
-}
-
-// ApiMiddleware will add the db connection to the context
-func ApiMiddleware(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set("databaseConn", db)
-		c.Next()
-	}
-}
-
 func main() {
-	db := InitDb()
+	db := repository.InitDb()
 	defer db.Close()
 
 	router = gin.Default()
-	router.Use(ApiMiddleware(db))
+	router.Use(repository.ApiMiddleware(db))
 
 	delivery.Endpoints(router)
 

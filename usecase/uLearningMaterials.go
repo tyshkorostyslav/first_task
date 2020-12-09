@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -53,5 +54,33 @@ func Commitment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "couldn't get a database"})
 		return
 	}
+	tx := db.Begin()
+	userID, err := strconv.Atoi(c.PostForm("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	learningMaterial := c.PostForm("learningMaterial")
+	book := c.PostForm("book")
+	page := c.PostForm("page")
+	err = repository.UpdateLearningMaterial(tx, learningMaterial, userID)
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	err = repository.UpdateBook(tx, book, userID)
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	err = repository.UpdatePage(tx, page, userID)
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	tx.Commit()
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Comittment was successful!"})
 }

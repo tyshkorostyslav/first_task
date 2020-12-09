@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/jinzhu/gorm"
 	repository "github.com/tyshkorostyslav/first_task/repository/models"
 )
@@ -109,40 +111,59 @@ func UpdateUser(tx *gorm.DB, userID int, userName string, hashedPword string) er
 	return nil
 }
 
-func UpdateLearningMaterial(tx *gorm.DB, learningMaterialID int, ownerId int) error {
+func UpdateLearningMaterial(tx *gorm.DB, learningMaterialName string, ownerId int) error {
 	var learningMaterial repository.LearningMaterial
 
-	if err := tx.First(&learningMaterial, learningMaterialID).Error; err != nil {
+	if err := tx.Where(&repository.LearningMaterial{
+		Name: learningMaterialName,
+	}).First(&learningMaterial).Error; err != nil {
+		return err
+	}
+	if learningMaterial.OwnerID == 0 {
+		if err := tx.Model(&learningMaterial).Update("OwnerId", ownerId).Error; err != nil {
+			return err
+		}
+	} else {
+		err := errors.New("This learning material is already taken.")
 		return err
 	}
 
-	if err := tx.Model(&learningMaterial).Update("OwnerId", ownerId).Error; err != nil {
-		return err
-	}
 	return nil
 }
 
-func UpdateBook(tx *gorm.DB, bookID int, ownerId int) error {
+func UpdateBook(tx *gorm.DB, bookName string, ownerId int) error {
 	var book repository.LearningMaterial
 
-	if err := tx.First(&book, bookID).Error; err != nil {
+	if err := tx.Where(&repository.LearningMaterial{
+		Name: bookName,
+	}).First(&book).Error; err != nil {
 		return err
 	}
-
-	if err := tx.Model(&book).Update("OwnerId", ownerId).Error; err != nil {
+	if book.OwnerID == 0 {
+		if err := tx.Model(&book).Update("OwnerId", ownerId).Error; err != nil {
+			return err
+		}
+	} else {
+		err := errors.New("This book is already taken.")
 		return err
 	}
 	return nil
 }
 
-func UpdatePage(tx *gorm.DB, pageID int, ownerId int) error {
+func UpdatePage(tx *gorm.DB, pageName string, ownerId int) error {
 	var page repository.LearningMaterial
 
-	if err := tx.First(&page, pageID).Error; err != nil {
+	if err := tx.Where(&repository.LearningMaterial{
+		Name: pageName,
+	}).First(&page).Error; err != nil {
 		return err
 	}
-
-	if err := tx.Model(&page).Update("OwnerId", ownerId).Error; err != nil {
+	if page.OwnerID == 0 {
+		if err := tx.Model(&page).Update("OwnerId", ownerId).Error; err != nil {
+			return err
+		}
+	} else {
+		err := errors.New("This page is already taken.")
 		return err
 	}
 	return nil
