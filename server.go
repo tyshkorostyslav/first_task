@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/tyshkorostyslav/first_task/delivery"
-	repository "github.com/tyshkorostyslav/first_task/repository/models"
+	repository "github.com/tyshkorostyslav/first_task/repository"
 )
 
 var router *gin.Engine
