@@ -47,11 +47,14 @@ func ReadUser(db *gorm.DB) ([]repository.User, error) {
 func ReadLearningMaterial(db *gorm.DB, available bool) ([]repository.LearningMaterial, error) {
 	var learningMaterials []repository.LearningMaterial
 	if available {
-		if err := db.Find(&learningMaterials, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
+		if err := db.Find(&learningMaterials, repository.LearningMaterial{
+			OwnerID: 0,
+			Type:    "learningMaterial",
+		}).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		if err := db.Find(&learningMaterials).Error; err != nil {
+		if err := db.Find(&learningMaterials, repository.LearningMaterial{Type: "learningMeterial"}).Error; err != nil {
 			return nil, err
 		}
 	}
@@ -63,11 +66,14 @@ func ReadBook(db *gorm.DB, available bool) ([]repository.LearningMaterial, error
 	var books []repository.LearningMaterial
 
 	if available {
-		if err := db.Find(&books, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
+		if err := db.Find(&books, repository.LearningMaterial{
+			OwnerID: 0,
+			Type:    "book",
+		}).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		if err := db.Find(&books).Error; err != nil {
+		if err := db.Find(&books, repository.LearningMaterial{Type: "book"}).Error; err != nil {
 			return nil, err
 		}
 	}
@@ -78,11 +84,14 @@ func ReadPage(db *gorm.DB, available bool) ([]repository.LearningMaterial, error
 	var pages []repository.LearningMaterial
 
 	if available {
-		if err := db.Find(&pages, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
+		if err := db.Find(&pages, repository.LearningMaterial{
+			OwnerID: 0,
+			Type:    "page",
+		}).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		if err := db.Find(&pages).Error; err != nil {
+		if err := db.Find(&pages, repository.LearningMaterial{Type: "page"}).Error; err != nil {
 			return nil, err
 		}
 	}
@@ -116,6 +125,7 @@ func UpdateLearningMaterial(tx *gorm.DB, learningMaterialName string, ownerId in
 
 	if err := tx.Where(&repository.LearningMaterial{
 		Name: learningMaterialName,
+		Type: "learning_material",
 	}).First(&learningMaterial).Error; err != nil {
 		return err
 	}
@@ -136,6 +146,7 @@ func UpdateBook(tx *gorm.DB, bookName string, ownerId int) error {
 
 	if err := tx.Where(&repository.LearningMaterial{
 		Name: bookName,
+		Type: "book",
 	}).First(&book).Error; err != nil {
 		return err
 	}
@@ -155,6 +166,7 @@ func UpdatePage(tx *gorm.DB, pageName string, ownerId int) error {
 
 	if err := tx.Where(&repository.LearningMaterial{
 		Name: pageName,
+		Type: "page",
 	}).First(&page).Error; err != nil {
 		return err
 	}

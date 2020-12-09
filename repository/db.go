@@ -8,7 +8,7 @@ import (
 )
 
 func InitDb() *gorm.DB {
-	dsn := "user:error456456@tcp(127.0.0.1:3306)/dbname?charset=utf8&parseTime=True&loc=Local"
+	dsn := "root:error456456@tcp(127.0.0.1:3306)/dbname?charset=utf8&parseTime=True&loc=Local"
 	db, err := gorm.Open("mysql", dsn)
 	// Display SQL queries
 	db.LogMode(true)
