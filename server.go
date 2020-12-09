@@ -14,18 +14,21 @@ import (
 var router *gin.Engine
 
 func main() {
-	db := repository.InitDb()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	db_user := os.Getenv("DB_USER")
+	pword := os.Getenv("DB_PWORD")
+	db_addr := os.Getenv("DB_ADDR")
+	db_name := os.Getenv("DB_NAME")
+	db := repository.InitDb(db_user, pword, db_addr, db_name)
 	defer db.Close()
 
 	router = gin.Default()
 	router.Use(repository.ApiMiddleware(db))
 
 	delivery.Endpoints(router)
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	port := os.Getenv("PORT")
 

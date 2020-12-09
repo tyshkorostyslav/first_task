@@ -7,8 +7,8 @@ import (
 	repository "github.com/tyshkorostyslav/first_task/repository/models"
 )
 
-func InitDb() *gorm.DB {
-	dsn := "root:error456456@tcp(127.0.0.1:3306)/dbname?charset=utf8&parseTime=True&loc=Local"
+func InitDb(db_user string, pword string, db_addr string, db_name string) *gorm.DB {
+	dsn := db_user + ":" + pword + "@" + db_addr + "/" + db_name + "?charset=utf8&parseTime=True&loc=Local"
 	db, err := gorm.Open("mysql", dsn)
 	// Display SQL queries
 	db.LogMode(true)
