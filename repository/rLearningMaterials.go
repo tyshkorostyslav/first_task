@@ -5,89 +5,89 @@ import (
 	repository "github.com/tyshkorostyslav/first_task/repository/models"
 )
 
-func createUser(tx *gorm.DB, user repository.User) error {
+func CreateUser(tx *gorm.DB, user repository.User) error {
 	if err := tx.Create(&user).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func createLearningMaterial(tx *gorm.DB, learningMaterial repository.LearningMaterial) error {
+func CreateLearningMaterial(tx *gorm.DB, learningMaterial repository.LearningMaterial) error {
 	if err := tx.Create(&learningMaterial).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func createBook(tx *gorm.DB, book repository.LearningMaterial) error {
+func CreateBook(tx *gorm.DB, book repository.LearningMaterial) error {
 	if err := tx.Create(&book).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func createPage(tx *gorm.DB, page repository.LearningMaterial) error {
+func CreatePage(tx *gorm.DB, page repository.LearningMaterial) error {
 	if err := tx.Create(&page).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func readUser(tx *gorm.DB) error {
+func ReadUser(db *gorm.DB) ([]repository.User, error) {
 	var users []repository.User
 
-	if err := tx.Find(&users).Error; err != nil {
-		return err
+	if err := db.Find(&users).Error; err != nil {
+		return nil, err
 	}
-	return nil
+	return users, nil
 }
 
-func readLearningMaterial(tx *gorm.DB, available bool) error {
+func ReadLearningMaterial(db *gorm.DB, available bool) ([]repository.LearningMaterial, error) {
 	var learningMaterials []repository.LearningMaterial
 	if available {
-		if err := tx.Find(&learningMaterials, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
-			return err
+		if err := db.Find(&learningMaterials, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
+			return nil, err
 		}
 	} else {
-		if err := tx.Find(&learningMaterials).Error; err != nil {
-			return err
+		if err := db.Find(&learningMaterials).Error; err != nil {
+			return nil, err
 		}
 	}
 
-	return nil
+	return learningMaterials, nil
 }
 
-func readBook(tx *gorm.DB, available bool) error {
+func ReadBook(db *gorm.DB, available bool) ([]repository.LearningMaterial, error) {
 	var books []repository.LearningMaterial
 
 	if available {
-		if err := tx.Find(&books, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
-			return err
+		if err := db.Find(&books, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
+			return nil, err
 		}
 	} else {
-		if err := tx.Find(&books).Error; err != nil {
-			return err
+		if err := db.Find(&books).Error; err != nil {
+			return nil, err
 		}
 	}
-	return nil
+	return books, nil
 }
 
-func readPage(tx *gorm.DB, available bool) error {
+func ReadPage(db *gorm.DB, available bool) ([]repository.LearningMaterial, error) {
 	var pages []repository.LearningMaterial
 
 	if available {
-		if err := tx.Find(&pages, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
-			return err
+		if err := db.Find(&pages, repository.LearningMaterial{OwnerID: 0}).Error; err != nil {
+			return nil, err
 		}
 	} else {
-		if err := tx.Find(&pages).Error; err != nil {
-			return err
+		if err := db.Find(&pages).Error; err != nil {
+			return nil, err
 		}
 	}
-	return nil
+	return pages, nil
 }
 
-func updateUser(tx *gorm.DB, userID int, userName string, hashedPword string) error {
+func UpdateUser(tx *gorm.DB, userID int, userName string, hashedPword string) error {
 	var user repository.User
 
 	if err := tx.First(&user, userID).Error; err != nil {
@@ -109,7 +109,7 @@ func updateUser(tx *gorm.DB, userID int, userName string, hashedPword string) er
 	return nil
 }
 
-func updateLearningMaterial(tx *gorm.DB, learningMaterialID int, ownerId int) error {
+func UpdateLearningMaterial(tx *gorm.DB, learningMaterialID int, ownerId int) error {
 	var learningMaterial repository.LearningMaterial
 
 	if err := tx.First(&learningMaterial, learningMaterialID).Error; err != nil {
@@ -122,7 +122,7 @@ func updateLearningMaterial(tx *gorm.DB, learningMaterialID int, ownerId int) er
 	return nil
 }
 
-func updateBook(tx *gorm.DB, bookID int, ownerId int) error {
+func UpdateBook(tx *gorm.DB, bookID int, ownerId int) error {
 	var book repository.LearningMaterial
 
 	if err := tx.First(&book, bookID).Error; err != nil {
@@ -135,7 +135,7 @@ func updateBook(tx *gorm.DB, bookID int, ownerId int) error {
 	return nil
 }
 
-func updatePage(tx *gorm.DB, pageID int, ownerId int) error {
+func UpdatePage(tx *gorm.DB, pageID int, ownerId int) error {
 	var page repository.LearningMaterial
 
 	if err := tx.First(&page, pageID).Error; err != nil {
@@ -148,7 +148,7 @@ func updatePage(tx *gorm.DB, pageID int, ownerId int) error {
 	return nil
 }
 
-func deleteUser(tx *gorm.DB, userID int) error {
+func DeleteUser(tx *gorm.DB, userID int) error {
 	var user repository.User
 
 	if err := tx.First(&user, userID).Error; err != nil {
@@ -161,7 +161,7 @@ func deleteUser(tx *gorm.DB, userID int) error {
 	return nil
 }
 
-func deleteLearningMaterial(tx *gorm.DB, learningMaterialID int) error {
+func DeleteLearningMaterial(tx *gorm.DB, learningMaterialID int) error {
 	var learningMaterial repository.LearningMaterial
 
 	if err := tx.First(&learningMaterial, learningMaterialID).Error; err != nil {
@@ -174,7 +174,7 @@ func deleteLearningMaterial(tx *gorm.DB, learningMaterialID int) error {
 	return nil
 }
 
-func deleteBook(tx *gorm.DB, bookID int) error {
+func DeleteBook(tx *gorm.DB, bookID int) error {
 	var book repository.LearningMaterial
 	if err := tx.First(&book, bookID).Error; err != nil {
 		return err
@@ -186,7 +186,7 @@ func deleteBook(tx *gorm.DB, bookID int) error {
 	return nil
 }
 
-func deletePage(tx *gorm.DB, pageID int) error {
+func DeletePage(tx *gorm.DB, pageID int) error {
 	var page repository.LearningMaterial
 	if err := tx.First(&page, pageID).Error; err != nil {
 		return err
